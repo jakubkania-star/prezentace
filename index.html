@@ -22,22 +22,31 @@
     let photos = [];
     let index = 0;
     let timer = null;
-    const delay = 8000; // 8 sekund
+    const delay = 8000; // čas mezi fotkami v ms (8s)
 
     async function loadPhotos() {
-      const res = await fetch(SCRIPT_URL);
-      photos = await res.json();
-      if (photos.length === 0) {
-        document.getElementById("info").textContent = "Žádné fotky nenalezeny.";
-        return;
+      try {
+        const res = await fetch(SCRIPT_URL);
+        photos = await res.json();
+        console.log("Načtené fotky:", photos);
+
+        if (!photos || photos.length === 0) {
+          document.getElementById("info").textContent = "Žádné fotky nenalezeny.";
+          return;
+        }
+
+        showPhoto();
+        timer = setInterval(nextPhoto, delay);
+
+      } catch (err) {
+        console.error("Chyba při načítání fotek:", err);
+        document.getElementById("info").textContent = "Nepodařilo se načíst fotky.";
       }
-      showPhoto();
-      timer = setInterval(nextPhoto, delay);
     }
 
     function showPhoto() {
       const p = photos[index];
-      document.getElementById("slide").src = `https://drive.google.com/uc?export=view&id=${p.url.match(/[-\w]{25,}/)}`;
+      document.getElementById("slide").src = p.url;
       document.getElementById("info").textContent = `${p.folder} — ${p.name} (${new Date(p.created).toLocaleDateString()})`;
     }
 
