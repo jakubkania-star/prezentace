@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <title>Prezentace</title>
+  <style>
+    body { margin: 0; background: black; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  </style>
+</head>
+<body>
+  <img id="slide" src="" alt="Prezentace">
+  <script>
+    const GAS_URL = "TVOJE_GAS_URL";
+    let files = [], index = 0;
+
+    async function loadIndex() {
+      const res = await fetch(`${GAS_URL}?action=index`);
+      files = await res.json();
+    }
+
+    async function showNext() {
+      if (!files.length) return;
+      const f = files[index % files.length];
+      const res = await fetch(`${GAS_URL}?action=media&id=${f.id}`);
+      const data = await res.json();
+      if (data.base64) {
+        document.getElementById('slide').src = `data:${data.mimeType};base64,${data.base64}`;
+      }
+      index++;
+    }
+
+    (async () => {
+      await loadIndex();
+      await showNext();
+      setInterval(showNext, 5000); // změna po 5 s
+    })();
+  </script>
+</body>
+</html>
