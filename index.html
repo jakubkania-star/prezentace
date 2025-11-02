@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <title>Admin — Prezentace</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin: 2rem; }
+    button { margin: 0.5rem; padding: 0.7rem 1.2rem; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>🎛️ Admin — Prezentace</h1>
+  <input id="token" placeholder="Admin heslo" type="password"><br>
+  <button onclick="start()">Spustit</button>
+  <button onclick="stop()">Zastavit</button>
+  <button onclick="next()">Další fotka</button>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbz5XLwSf9GHdvYQM0TttiXZER0hAO1Ob3PBHGcCemMUze27_SwKEt7FihQxsmED21M_wA/exec";
+    async function send(action) {
+      const token = document.getElementById('token').value;
+      await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify({ adminToken: token, action })
+      });
+    }
+    const start = () => send('start');
+    const stop = () => send('stop');
+    const next = () => send('next');
+  </script>
+</body>
+</html>
